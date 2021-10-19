@@ -25,7 +25,7 @@ class Solution(object):
             if isBadVersion(mid) == True:
                 right = mid
             else:
-                left = mid + 1
+                left = mid + 1  # otherwise loops forever
         return left
 
 # @lc code=end
