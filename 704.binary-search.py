@@ -11,6 +11,11 @@ class Solution(object):
         :type nums: List[int]
         :type target: int
         :rtype: int
+
+        Binary search is a textbook algorithm based on the idea to compare the target value to the middle element of the array.
+        If the target value is equal to the middle element - we're done.
+        If the target value is smaller - continue to search on the left.
+        If the target value is larger - continue to search on the right.
         """
         left, right = 0, len(nums) - 1
         while left <= right:
