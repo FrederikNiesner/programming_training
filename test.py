@@ -1,4 +1,5 @@
 
+# solution from https://leetcode.com/problems/longest-substring-without-repeating-characters/discuss/811812/Python-3-greater-Sliding-window-technique 
 
 s = "abcabcbb"
 
