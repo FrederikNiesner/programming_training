@@ -1,15 +1,31 @@
-
-# solution from https://leetcode.com/problems/longest-substring-without-repeating-characters/discuss/811812/Python-3-greater-Sliding-window-technique 
-
-s = "pwwkew"
+s1, s2 = "adc", "dcda"
 
 
-max_length = 0
-window_start = 0
-mapping = {}
 
-for window_end in range(len(s)):
-    if s[window_end] in mapping:            
-        window_start = max(window_start, mapping[s[window_end]] + 1)
-    mapping[s[window_end]] = window_end
-    max_length = max(max_length, window_end - window_start + 1)
+def checkInclusion(s1, s2):
+
+    import collections
+    ctr1 = collections.defaultdict(int)
+    ctr2 = collections.defaultdict(int)
+    for x in s1:
+        ctr1[x] += 1
+    for x in s2[:len(s1)]:  # set initial dict of same length s1
+        ctr2[x] += 1
+
+    i = 0; j = len(s1)  # window: j - i
+
+    while j < len(s2):  # loop until end of window j = end of string s2
+
+        if ctr2 == ctr1:
+            return True
+
+        ctr2[s2[i]] -= 1
+        if ctr2[s2[i]] < 1:
+            ctr2.pop(s2[i])
+        ctr2[s2[j]] = ctr2.get(s2[j], 0) + 1
+        i += 1; j += 1
+
+    return ctr2 == ctr1
+
+
+checkInclusion(s1, s2)
