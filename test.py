@@ -1,25 +1,28 @@
-def climbingStairs(n):
-    # dynamic programming
-    # seperate problem into similiar sub problems
-    # keep interim results
 
-    # Bottom up, constant space
+# array of nums, sorted ascending
+nums = [-1, 0, 3, 5, 9, 12]
+target = 9
 
-    if n == 1:
-        return 1
 
-    # steps
-    first, second = 1, 2
+def binarySearch(array, target):
 
-    for i in range(n - 2):
+    # search target int in nums
+    leftPointer, rightPointer = 0, (len(array) - 1)
 
-        # Fibonacci
-        sum = first + second
-        first = second
-        second = sum
-    print(x + 1, "-", second, "\n")
-    
-    return second
+    while leftPointer <= rightPointer:
+        mid = leftPointer + (rightPointer - leftPointer) // 2
+        test = array[mid]
+        if target == test:
+            print(mid)
+            return mid
+        elif target < test:
+            rightPointer = mid - 1
+        else:
+            leftPointer = mid + 1
+    print('-1')
+    return -1  # target not in array
 
-for x in range(10):
-    climbingStairs(x + 1)
+    # 0(log n) runtime
+
+
+binarySearch(nums, target)
