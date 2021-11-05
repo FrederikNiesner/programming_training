@@ -1,28 +1,36 @@
 
 # array of nums, sorted ascending
-nums = [-1, 0, 3, 5, 9, 12]
-target = 9
+n = 5
+bad = 4
 
 
-def binarySearch(array, target):
+def isBadVersion(n):
+    if n > 4:
+        return False
+    else:
+        return True
 
-    # search target int in nums
-    leftPointer, rightPointer = 0, (len(array) - 1)
 
-    while leftPointer <= rightPointer:
-        mid = leftPointer + (rightPointer - leftPointer) // 2
-        test = array[mid]
-        if target == test:
-            print(mid)
-            return mid
-        elif target < test:
-            rightPointer = mid - 1
+def firstBadVersion(n):
+
+    left, right = 1, n
+
+    while left <= right:
+        version = left + (right - left) // 2  # the current version to test
+        check1 = isBadVersion(version)
+        check2 = isBadVersion(version + 1)  # API call -> minimize
+        
+        versionCheck = check1 + check2
+
+        if versionCheck == 1:
+            print(version)
+            return version + 1
+
+        elif versionCheck == 2:
+            left = version
+
         else:
-            leftPointer = mid + 1
-    print('-1')
-    return -1  # target not in array
-
-    # 0(log n) runtime
+            right = version
 
 
-binarySearch(nums, target)
+firstBadVersion(5)
