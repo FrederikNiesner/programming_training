@@ -1,36 +1,28 @@
 
 # array of nums, sorted ascending
-n = 5
-bad = 4
+nums = [1, 3, 5, 6]
+target = 2
 
 
-def isBadVersion(n):
-    if n > 4:
-        return False
-    else:
-        return True
+def searchInsert(nums, target):
 
-
-def firstBadVersion(n):
-
-    left, right = 1, n
+    n = len(nums) - 1
+    left, right = 0, n
 
     while left <= right:
-        version = left + (right - left) // 2  # the current version to test
-        check1 = isBadVersion(version)
-        check2 = isBadVersion(version + 1)  # API call -> minimize
-        
-        versionCheck = check1 + check2
+        # iterate
+        mid = left + (right - left) // 2
 
-        if versionCheck == 1:
-            print(version)
-            return version + 1
-
-        elif versionCheck == 2:
-            left = version
-
+        if nums[mid] == target:
+            print(mid)
+            return mid
+        elif nums[mid] < target:
+            left = mid + 1
         else:
-            right = version
+            right = mid - 1
+
+    print(right + 1)
+    return right + 1
 
 
-firstBadVersion(5)
+searchInsert(nums, target)
