@@ -1,28 +1,21 @@
 
 # array of nums, sorted ascending
-nums = [1, 3, 5, 6]
-target = 2
+nums = [1, 2, 3, 4, 5, 6, 7]
+k = 3
 
 
-def searchInsert(nums, target):
-
-    n = len(nums) - 1
-    left, right = 0, n
-
-    while left <= right:
-        # iterate
-        mid = left + (right - left) // 2
-
-        if nums[mid] == target:
-            print(mid)
-            return mid
-        elif nums[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-
-    print(right + 1)
-    return right + 1
+def rotateArray(nums, k):
+    
+    left, right = 0, len(nums)-1
+    while k > 0:
+        nums[left]
 
 
-searchInsert(nums, target)
+    """while k > 0:
+        last = nums.pop()
+        nums.insert(0, last) 
+        k -= 1
+        print(nums)
+"""
+
+rotateArray(nums, k)
