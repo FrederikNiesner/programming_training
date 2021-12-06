@@ -12,21 +12,14 @@ class Solution(object):
         :type k: int
         :rtype: None Do not return anything, modify nums in-place instead.
         """
-        
-        n = len(nums)
-        k %= n
-        
-        start = count = 0
-        while count < n:
-            current, prev = start, nums[start]
-            while True:  # switch index
-                next_idx = (current + k) % n
-                nums[next_idx], prev = prev, nums[next_idx]
-                current = next_idx
-                count += 1
-                
-                if start == current:
-                    break
-            start += 1
+    
+        while k > 0:
+            last = nums.pop()
+            nums.insert(0, last)
+            k -= 1
+            # print(nums)
+        return nums
+
+
 # @lc code=end
 

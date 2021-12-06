@@ -16,17 +16,19 @@ class Solution(object):
         :type n: int
         :rtype: int
         """
-        
-        # n: int list, number of versions
-        left, right = 0, n
+
+        left, right = 1, n
 
         while left < right:
-            mid = left + (right - left) // 2
-            if isBadVersion(mid) == True:
-                right = mid
+            version = left + (right - left) // 2  # the current version to test
+
+            if isBadVersion(version) == True:
+                right = version
             else:
-                left = mid + 1  # otherwise loops forever
+                left = version + 1
+        
         return left
+        
 
 # @lc code=end
 

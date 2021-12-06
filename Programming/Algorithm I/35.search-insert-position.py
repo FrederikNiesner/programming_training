@@ -13,21 +13,23 @@ class Solution(object):
         :rtype: int
         """
 
-        # Left, right list index
-        left, right = 0, len(nums) - 1
+        n = len(nums) - 1
+        left, right = 0, n
 
-        # start binary search
         while left <= right:
-            
-            mid = left + (right - left) // 2  # get mid index
-            if nums[mid] == target:
-                return mid
-            elif nums[mid] > target:  # target is left of mid
-                right = mid - 1
-            else:
-                left = mid + 1
-                
-        return left
-        
-# @lc code=end
+            # iterate
+            mid = left + (right - left) // 2
 
+            if nums[mid] == target:
+                # print(mid)
+                return mid
+            elif nums[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        # print(right + 1)
+        return right + 1
+
+
+# @lc code=end

@@ -11,22 +11,21 @@ class Solution(object):
         :type nums: List[int]
         :type target: int
         :rtype: int
-
-        Binary search is a textbook algorithm based on the idea to compare the target value to the middle element of the array.
-        If the target value is equal to the middle element - we're done.
-        If the target value is smaller - continue to search on the left.
-        If the target value is larger - continue to search on the right.
         """
-        left, right = 0, len(nums) - 1
-        while left <= right:
-            pivot = left + (right - left) // 2
-            if nums[pivot] == target:
-                return pivot
-            if target < nums[pivot]:
-                right = pivot - 1
+        array = nums
+        leftPointer, rightPointer = 0, (len(array) - 1)
+        while leftPointer <= rightPointer:
+            mid = leftPointer + (rightPointer - leftPointer) // 2
+            test = array[mid]
+            if target == test:
+                # print(mid)
+                return mid
+            elif target < test:
+                rightPointer = mid - 1
             else:
-                left = pivot + 1
-        return -1
-        
+                leftPointer = mid + 1
+        # print('-1')
+        return -1  # target not in array
+
 # @lc code=end
 

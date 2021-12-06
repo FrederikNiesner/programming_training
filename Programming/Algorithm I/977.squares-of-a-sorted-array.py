@@ -11,10 +11,14 @@ class Solution(object):
         :type nums: List[int]
         :rtype: List[int]
         """
-        list = []
-        for i in range(len(nums)):
-            list.append(nums[i] * nums[i])
-        list.sort()
-        return list        
+
+        for i, num in enumerate(nums):
+            squared = nums[i] * nums[i]
+            nums[i] = squared
+
+        nums.sort()
+        # print(nums)
+        return nums
+
 # @lc code=end
 
