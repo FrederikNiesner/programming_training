@@ -1,21 +1,22 @@
 
 # array of nums, sorted ascending
-nums = [1, 2, 3, 4, 5, 6, 7]
-k = 3
+nums = [1, 2, 3, 1]
 
 
-def rotateArray(nums, k):
-    
-    left, right = 0, len(nums)-1
-    while k > 0:
-        nums[left]
+def containsDuplicate(self, nums):
+    """
+    :type nums: List[int]
+    :rtype: bool
+    """
+
+    nums.sort()
+    i, j = 0, 1
+
+    while j < len(nums - 1):
+        if nums[i] == nums[j]:
+            return True
+
+    pass
 
 
-    """while k > 0:
-        last = nums.pop()
-        nums.insert(0, last) 
-        k -= 1
-        print(nums)
-"""
-
-rotateArray(nums, k)
+containsDuplicate(nums)
