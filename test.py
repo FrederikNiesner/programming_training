@@ -1,22 +1,23 @@
 
 # array of nums, sorted ascending
-nums = [1, 2, 3, 1]
+nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
 
 
-def containsDuplicate(self, nums):
+def maxSubArray(nums):
     """
     :type nums: List[int]
     :rtype: bool
     """
 
-    nums.sort()
-    i, j = 0, 1
+    # Initialize our variables using the first element
+    currentSubArray = maxSubArray = nums[0]
 
-    while j < len(nums - 1):
-        if nums[i] == nums[j]:
-            return True
+    # Start with the 2nd element
+    for num in nums[1:]:
+        currentSubArray = max(num, currentSubArray + num)
+        maxSubArray = max(currentSubArray, maxSubArray)
 
-    pass
+    return maxSubArray
 
 
-containsDuplicate(nums)
+maxSubArray(nums)
