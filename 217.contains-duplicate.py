@@ -11,11 +11,6 @@ class Solution(object):
         :type nums: List[int]
         :rtype: bool
         """
-        # return len(nums) != len(set(nums))  # 1 line solution with set()
-
-        # easy to understand solution with hash table
         
-        
-
-
 # @lc code=end
+
