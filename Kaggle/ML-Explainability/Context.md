@@ -50,7 +50,7 @@ This is a smart precaution given the frequency of data errors. In practice, show
 
 ---
 
-## Permutation Importance
+## 1. Permutation Importance
 
 One of the most basic questions we might ask of a model is: _What features have the biggest impact on predictions?_ This concept ist called **feature importance**.
 
@@ -89,9 +89,12 @@ With this insight, the process is as follows:
 1. Get a trained model.
 2. Shuffle the values in a single column, make predictions using the resulting dataset. Use these predictions and the true target values to calculate how much the loss function suffered from shuffling. That performance deterioration measures the importance of the variable you just shuffled.
 3. Return the data to the original order (undoing the shuffle from step 2). Now **repeat step 2 with the next column** in the dataset, until you have calculated the importance of each column.
-Code Example
-Our example will use a model that predicts whether a soccer/football team will have the "Man of the Game" winner based on the team's statistics. The "Man of the Game" award is given to the best player in the game. Model-building isn't our current focus, so the cell below loads the data and builds a rudimentary model.
 
+#### Code Example
+
+Our example will use a model that _predicts whether a soccer/football team will have the "Man of the Game" winner_ based on the team's statistics. The "Man of the Game" award is given to the best player in the game. Model-building isn't our current focus, so the cell below loads the data and builds a rudimentary model.
+
+```Py
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -104,13 +107,21 @@ X = data[feature_names]
 train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
 my_model = RandomForestClassifier(n_estimators=100,
                                   random_state=0).fit(train_X, train_y)
+```
+
 Here is how to calculate and show importances with the eli5 library:
 
+```Py
 import eli5
 from eli5.sklearn import PermutationImportance
 
 perm = PermutationImportance(my_model, random_state=1).fit(val_X, val_y)
 eli5.show_weights(perm, feature_names = val_X.columns.tolist())
+```
+
+Terminal Output
+
+```
 Weight	Feature
 0.1750 ± 0.0848	Goal Scored
 0.0500 ± 0.0637	Distance Covered (Kms)
@@ -130,7 +141,11 @@ Weight	Feature
 -0.0063 ± 0.0250	Goals in PSO
 -0.0187 ± 0.0306	Attempts
 -0.0500 ± 0.0637	Passes
-Interpreting Permutation Importances
+```
+
+### Interpreting Permutation Importance
+
+
 The values towards the top are the most important features, and those towards the bottom matter least.
 
 The first number in each row shows how much model performance decreased with a random shuffling (in this case, using "accuracy" as the performance metric).
@@ -141,3 +156,62 @@ You'll occasionally see negative values for permutation importances. In those ca
 
 In our example, the most important feature was Goals scored. That seems sensible. Soccer fans may have some intuition about whether the orderings of other variables are surprising or not.
 
+---
+
+## 2. Partial Plots
+
+
+### Partial Dependence Plots
+
+Feature importance: _What variables **most** affect predictions_
+Partial dependence plots: _**How** a feature affects predictions_
+
+This is useful to answer questions like:
+
+- _Controlling for all other house features, what impact do longitude and latitude have on home prices?_ To restate this, _how would similarly sized houses be priced in different areas?_
+- _Are predicted health differences between two groups due to differences in their diets, or due to some other factor?_
+
+Compare with linear / logistic regression models: Partial dependence plots can be interpreted **similarly to the coefficients** in those models. Though, partial dependence plots on **sophisticated models can capture more complex patterns than coefficients** from simple models. 
+
+### How It Works
+
+Like permutation importance, partial dependence plots are **calculated after a model has been fit**. The model is fit on real data that has not been artificially manipulated in any way.
+
+In the soccer example, teams may differ in many ways. How many passes they made, shots they took, goals they scored, etc. At first glance, it seems difficult to disentangle the effect of these features.
+
+To see how **partial plots separate out the effect of each feature**, we start by considering a single row of data. For example, that row of data might represent a team that had the ball 50% of the time, made 100 passes, took 10 shots and scored 1 goal.
+
+We will use the fitted model to predict our outcome (probability their player won "man of the match"). But we **repeatedly alter the value for one variable to make a series of predictions**. We could predict the outcome if the team had the ball only 40% of the time. We then predict with them having the ball 50% of the time. Then predict again for 60%. And so on. We trace out predicted outcomes (on the vertical axis) as we move from small values of ball possession to large values (on the horizontal axis).
+
+In this description, we used only a single row of data. Interactions between features may cause the plot for a single row to be atypical. So, we repeat that mental experiment with multiple rows from the original dataset, and we plot the average predicted outcome on the vertical axis.
+
+
+#### Code Example
+Model building isn't our focus, so we won't focus on the data exploration or model building code. 
+
+```Py
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+data = pd.read_csv('../input/fifa-2018-match-statistics/FIFA 2018 Statistics.csv')
+y = (data['Man of the Match'] == "Yes")  # Convert from string "Yes"/"No" to binary
+feature_names = [i for i in data.columns if data[i].dtype in [np.int64]]
+X = data[feature_names]
+train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
+tree_model = DecisionTreeClassifier(random_state=0, max_depth=5, min_samples_split=5).fit(train_X, train_y)
+```
+
+Our first example uses a decision tree which you can see below. In practice, you'll use more sophisticated models for real world applications. 
+
+```Py
+from sklearn import tree
+import graphviz
+
+tree_graph = tree.export_graphviz(tree_model, out_file=None, feature_names=feature_names)
+graphviz.Source(tree_graph 
+```
+
+<img src="https://i.imgur.com/wjMAysV.png" alt="Data">
