@@ -1,5 +1,10 @@
 # Machine Learning Explainabilty
 
+References: 
+
+https://python-data-science.readthedocs.io/en/latest/explainability.html#partial-dependence-plots
+
+
 ## Intro: Use Cases for Model Insights
 
 ### What Types of Insights Are Possible?
@@ -51,6 +56,8 @@ This is a smart precaution given the frequency of data errors. In practice, show
 ---
 
 ## 1. Permutation Importance
+
+> Shows which features affect predictions the most
 
 One of the most basic questions we might ask of a model is: _What features have the biggest impact on predictions?_ This concept ist called **feature importance**.
 
@@ -160,6 +167,7 @@ In our example, the most important feature was Goals scored. That seems sensible
 
 ## 2. Partial Plots
 
+> Shows **how** a feature (or multiple) affects predictions.
 
 ### Partial Dependence Plots
 
@@ -214,4 +222,83 @@ tree_graph = tree.export_graphviz(tree_model, out_file=None, feature_names=featu
 graphviz.Source(tree_graph 
 ```
 
-<img src="https://i.imgur.com/wjMAysV.png" alt="Data">
+![Partial Plot](img/partial_plot.png "Partial Plot")
+
+As guidance to read the tree:
+
+- Leaves with children show their splitting criterion on the top
+- The pair of values at the bottom show the count of False values and True values for the target respectively, of data points in that node of the tree.
+
+Here is the code to create the Partial Dependence Plot using the PDPBox library. Which I did not get to run because it only works with older versions of matplotlib.
+
+```Py
+from matplotlib import pyplot as plt
+from pdpbox import pdp, get_dataset, info_plots
+
+# Create the data that we will plot
+pdp_goals = pdp.pdp_isolate(model=tree_model, dataset=val_X, model_features=feature_names, feature='Goal Scored')
+
+# plot it
+pdp.pdp_plot(pdp_goals, 'Goal Scored')
+plt.show()
+```
+
+<img src="https://python-data-science.readthedocs.io/en/latest/_images/partial_dependence.PNG" alt="Data">
+
+A few items are worth pointing out as you interpret this plot
+
+- The **y axis is interpreted as change in the prediction** from what it would be predicted at the baseline or leftmost value.
+- A blue shaded area indicates level of confidence
+
+From this particular graph, we see that _scoring a goal substantially increases your chances of winning "Man of The Match."_ **But extra goals beyond that appear to have little impact on predictions.**
+
+Here is another example plot:
+
+![Partial Plot](img/partial_plot_km.png "Partial Plot")
+
+This graph seems too simple to represent reality. But that's because the model is so simple. You should be able to see from the decision tree above that this is representing exactly the model's structure.
+
+You can easily compare the structure or implications of different models. Here is the same plot with a Random Forest model. 
+
+```Py
+# Build Random Forest model
+rf_model = RandomForestClassifier(random_state=0).fit(train_X, train_y)
+
+pdp_dist = pdp.pdp_isolate(model=rf_model, dataset=val_X, model_features=feature_names, feature=feature_to_plot)
+
+pdp.pdp_plot(pdp_dist, feature_to_plot)
+plt.show()
+```
+
+![Partial Plot](img/partial_plot_km_random_forest.png "Partial Plot")
+
+This model thinks you are more likely to win Man of the Match if your players run a total of 100km (100km????
+) over the course of the game. Though running much more causes lower predictions.
+
+In general, the smooth shape of this curve seems more plausible than the step function from the Decision Tree model. Though this dataset is small enough that we would be careful in how we interpret any model.
+
+### 2D Partial Dependence Plots
+
+If you are curious about interactions between features, 2D partial dependence plots are also useful. An example may clarify this.
+
+We will again use the Decision Tree model for this graph. It will create an extremely simple plot, but you should be able to match what you see in the plot to the tree itself.
+
+```Py
+# Similar to previous PDP plot except we use pdp_interact instead of pdp_isolate and pdp_interact_plot instead of pdp_isolate_plot
+features_to_plot = ['Goal Scored', 'Distance Covered (Kms)']
+inter1  =  pdp.pdp_interact(model=tree_model, dataset=val_X, model_features=feature_names, features=features_to_plot)
+
+pdp.pdp_interact_plot(pdp_interact_out=inter1, feature_names=features_to_plot, plot_type='contour')
+plt.show()
+```
+
+![Partial Plot](img/2d.png "2D Partial Plot")
+
+This graph shows predictions for any combination of Goals Scored and Distance covered.
+
+For example, we see the highest predictions when a team scores at least 1 goal and they run a total distance close to 100km. If they score 0 goals, distance covered doesn't matter. Can you see this by tracing through the decision tree with 0 goals?
+
+But distance can impact predictions if they score goals. Make sure you can see this from the 2D partial dependence plot. Can you see this pattern in the decision tree too?
+
+## 3. SHAP values
+
